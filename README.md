@@ -4,7 +4,7 @@ Tempplate tested and work in zabbix 5.0.X.
 For use this Template you need import
 Template Zabbix Action Check.xml
 in you Zabbix
-and linked for your zabbix-web server
+and linked for your zabbix-web server.
 Macros in template
 {$LOCATIN_ZABBIX} - where your Zabbix live
 {$SCHEME} - http/https
