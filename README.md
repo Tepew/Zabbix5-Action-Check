@@ -1,0 +1,1 @@
+# Zabbix5-Action-Check
