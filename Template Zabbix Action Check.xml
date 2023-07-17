@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2023-07-17T09:29:37Z</date>
+    <groups>
+        <group>
+            <name>[Инфра] Мониторинг</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Zabbix Action Check</template>
+            <name>Template Zabbix Action Check</name>
+            <groups>
+                <group>
+                    <name>[Инфра] Мониторинг</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Action</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Check count disabled Actions</name>
+                    <type>HTTP_AGENT</type>
+                    <key>check.count.disabled.actions</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>Action</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.result</params>
+                        </step>
+                    </preprocessing>
+                    <url>{$SCHEME}://{HOST.IP}/{$LOCATIN_ZABBIX}/api_jsonrpc.php</url>
+                    <posts>{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;action.get&quot;, &quot;params&quot;: {&quot;output&quot;: &quot;extend&quot;, &quot;countOutput&quot;: &quot;yes&quot;, &quot;filter&quot;: { &quot;eventsource&quot;: 0, &quot;status&quot;: 1} }, &quot;auth&quot;: &quot;{$TOKEN_ZABBIX}&quot;, &quot;id&quot;: 1}</posts>
+                    <post_type>JSON</post_type>
+                    <request_method>POST</request_method>
+                    <triggers>
+                        <trigger>
+                            <expression>{change()}=1</expression>
+                            <name>{HOST.NAME}: Count disabled Actions changed</name>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
+                            <expression>{nodata(20m)}=1</expression>
+                            <name>{HOST.NAME}: No data when check Actions</name>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$LOCATIN_ZABBIX}</macro>
+                    <value>zabbix</value>
+                </macro>
+                <macro>
+                    <macro>{$SCHEME}</macro>
+                    <value>https</value>
+                </macro>
+                <macro>
+                    <macro>{$TOKEN_ZABBIX}</macro>
+                    <type>SECRET_TEXT</type>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
